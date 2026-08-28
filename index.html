@@ -6,32 +6,73 @@
 <title>쇼핑 리스트</title>
 <style>
   :root {
-    --bg: #f5f5f7;
+    --bg-a: #a8edea;
+    --bg-b: #7ac7e8;
     --card-bg: #ffffff;
+    --panel-bg: #ffffff;
     --text: #1d1d1f;
     --sub: #6e6e73;
     --accent: #007aff;
+    --accent-2: #34c759;
     --danger: #ff3b30;
     --border: #e5e5ea;
+    --shadow: rgba(31, 41, 55, 0.12);
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
+    min-height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", sans-serif;
-    background: var(--bg);
+    background: linear-gradient(150deg, var(--bg-a) 0%, var(--bg-b) 100%);
+    background-attachment: fixed;
     color: var(--text);
     display: flex;
     justify-content: center;
-    padding: 40px 16px;
+    padding: 48px 16px;
   }
   .app {
     width: 100%;
     max-width: 420px;
+    background: var(--panel-bg);
+    border-radius: 24px;
+    padding: 28px 24px 24px;
+    box-shadow: 0 20px 45px var(--shadow), 0 2px 8px var(--shadow);
+    backdrop-filter: blur(6px);
   }
   h1 {
-    font-size: 24px;
-    margin: 0 0 20px;
+    font-size: 25px;
+    margin: 0 0 4px;
     text-align: center;
+    letter-spacing: -0.3px;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--sub);
+    font-size: 13px;
+    margin: 0 0 20px;
+  }
+  .progress-wrap {
+    margin-bottom: 20px;
+  }
+  .progress-track {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.35s ease;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--sub);
+    margin-top: 6px;
   }
   .input-row {
     display: flex;
@@ -40,36 +81,44 @@
   }
   input[type="text"] {
     flex: 1;
-    padding: 12px 14px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
     font-size: 16px;
     background: var(--card-bg);
     color: var(--text);
     outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
   input[type="text"]:focus {
     border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
   }
   button.add-btn {
-    padding: 12px 18px;
+    padding: 13px 20px;
     border: none;
-    border-radius: 10px;
-    background: var(--accent);
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent), #5ac8fa);
     color: white;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0, 122, 255, 0.3);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+  button.add-btn:hover {
+    transform: translateY(-1px);
   }
   button.add-btn:active {
-    opacity: 0.8;
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(0, 122, 255, 0.3);
   }
   ul.list {
     list-style: none;
     margin: 0;
     padding: 0;
     background: var(--card-bg);
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
@@ -79,21 +128,63 @@
     gap: 12px;
     padding: 14px 16px;
     border-bottom: 1px solid var(--border);
+    animation: itemIn 0.2s ease;
+    transition: background 0.15s ease;
+  }
+  li.item:hover {
+    background: rgba(0, 122, 255, 0.05);
   }
   li.item:last-child {
     border-bottom: none;
   }
+  @keyframes itemIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  li.item .check-wrap {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
   li.item input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: var(--accent);
+    appearance: none;
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    border: 2px solid var(--border);
+    border-radius: 50%;
     cursor: pointer;
     flex-shrink: 0;
+    display: grid;
+    place-content: center;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  }
+  li.item input[type="checkbox"]:active {
+    transform: scale(0.9);
+  }
+  li.item input[type="checkbox"]::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    transform: scale(0);
+    transition: transform 0.12s ease-in-out;
+    box-shadow: inset 1em 1em white;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  }
+  li.item input[type="checkbox"]:checked {
+    background: var(--accent-2);
+    border-color: var(--accent-2);
+  }
+  li.item input[type="checkbox"]:checked::before {
+    transform: scale(1);
   }
   li.item .label {
     flex: 1;
     font-size: 16px;
     word-break: break-word;
+    transition: color 0.15s ease;
   }
   li.item.checked .label {
     text-decoration: line-through;
@@ -102,24 +193,35 @@
   li.item .delete-btn {
     background: none;
     border: none;
-    color: var(--danger);
-    font-size: 20px;
+    color: var(--sub);
+    font-size: 18px;
     cursor: pointer;
     line-height: 1;
-    padding: 4px 6px;
+    padding: 6px 8px;
+    border-radius: 50%;
     flex-shrink: 0;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  li.item .delete-btn:hover {
+    background: rgba(255, 59, 48, 0.12);
+    color: var(--danger);
   }
   .empty {
     text-align: center;
     color: var(--sub);
-    padding: 32px 16px;
+    padding: 40px 16px;
     font-size: 14px;
+  }
+  .empty .empty-icon {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 10px;
   }
   .footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 14px;
+    margin-top: 16px;
     font-size: 13px;
     color: var(--sub);
     padding: 0 4px;
@@ -129,17 +231,25 @@
     border: none;
     color: var(--accent);
     font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
-    padding: 0;
+    padding: 4px 0;
+    transition: opacity 0.15s ease;
+  }
+  .clear-btn:hover {
+    opacity: 0.7;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #1c1c1e;
+      --bg-a: #2c5364;
+      --bg-b: #0f2027;
       --card-bg: #2c2c2e;
+      --panel-bg: #242426;
       --text: #f2f2f7;
       --sub: #98989d;
       --border: #3a3a3c;
+      --shadow: rgba(0, 0, 0, 0.45);
     }
   }
 </style>
@@ -147,6 +257,16 @@
 <body>
   <div class="app">
     <h1>🛒 쇼핑 리스트</h1>
+    <p class="subtitle">오늘 장바구니에 담을 것들</p>
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-label">
+        <span id="progressText">0 / 0 완료</span>
+        <span id="progressPercent">0%</span>
+      </div>
+    </div>
     <div class="input-row">
       <input type="text" id="itemInput" placeholder="아이템 입력 후 추가" autocomplete="off" />
       <button class="add-btn" id="addBtn">추가</button>
@@ -158,29 +278,34 @@
     </div>
   </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
-  const STORAGE_KEY = 'shopping-list-items';
+  const SUPABASE_URL = 'https://ihtrbofdfrwxcfbxzogt.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_nsfyl1RCddmWxM6uXld3Wg_bG5qkNCs';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  function loadItems() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) {
+  async function loadItems() {
+    const { data, error } = await sb
+      .from('shopping_items')
+      .select('id, text, checked')
+      .order('created_at', { ascending: true });
+    if (error) {
+      console.error('불러오기 실패:', error);
       return [];
     }
+    return data;
   }
 
-  function saveItems(items) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }
-
-  let items = loadItems();
+  let items = [];
 
   const listEl = document.getElementById('list');
   const inputEl = document.getElementById('itemInput');
   const addBtn = document.getElementById('addBtn');
   const countText = document.getElementById('countText');
   const clearCheckedBtn = document.getElementById('clearCheckedBtn');
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
+  const progressPercent = document.getElementById('progressPercent');
 
   function render() {
     listEl.innerHTML = '';
@@ -188,17 +313,22 @@
     if (items.length === 0) {
       const empty = document.createElement('div');
       empty.className = 'empty';
-      empty.textContent = '아직 담긴 아이템이 없어요';
+      empty.innerHTML = '<span class="empty-icon">🧺</span>아직 담긴 아이템이 없어요';
       listEl.appendChild(empty);
     } else {
       items.forEach(item => {
         const li = document.createElement('li');
         li.className = 'item' + (item.checked ? ' checked' : '');
 
+        const checkWrap = document.createElement('span');
+        checkWrap.className = 'check-wrap';
+
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.checked = item.checked;
         checkbox.addEventListener('change', () => toggleItem(item.id));
+
+        checkWrap.appendChild(checkbox);
 
         const label = document.createElement('span');
         label.className = 'label';
@@ -209,7 +339,7 @@
         deleteBtn.textContent = '✕';
         deleteBtn.addEventListener('click', () => deleteItem(item.id));
 
-        li.appendChild(checkbox);
+        li.appendChild(checkWrap);
         li.appendChild(label);
         li.appendChild(deleteBtn);
         listEl.appendChild(li);
@@ -218,35 +348,77 @@
 
     const checkedCount = items.filter(i => i.checked).length;
     countText.textContent = `${items.length}개 항목 (${checkedCount}개 완료)`;
+
+    const percent = items.length ? Math.round((checkedCount / items.length) * 100) : 0;
+    progressFill.style.width = percent + '%';
+    progressText.textContent = `${checkedCount} / ${items.length} 완료`;
+    progressPercent.textContent = percent + '%';
   }
 
-  function addItem() {
+  async function addItem() {
     const text = inputEl.value.trim();
     if (!text) return;
-    items.push({ id: crypto.randomUUID(), text, checked: false });
-    saveItems(items);
     inputEl.value = '';
+
+    const { data, error } = await sb
+      .from('shopping_items')
+      .insert({ text })
+      .select('id, text, checked')
+      .single();
+    if (error) {
+      console.error('추가 실패:', error);
+      return;
+    }
+    items.push(data);
     render();
     inputEl.focus();
   }
 
-  function toggleItem(id) {
+  async function toggleItem(id) {
     const item = items.find(i => i.id === id);
-    if (item) item.checked = !item.checked;
-    saveItems(items);
+    if (!item) return;
+    const nextChecked = !item.checked;
+    item.checked = nextChecked;
     render();
+
+    const { error } = await sb
+      .from('shopping_items')
+      .update({ checked: nextChecked })
+      .eq('id', id);
+    if (error) {
+      console.error('업데이트 실패:', error);
+      item.checked = !nextChecked;
+      render();
+    }
   }
 
-  function deleteItem(id) {
+  async function deleteItem(id) {
+    const prevItems = items;
     items = items.filter(i => i.id !== id);
-    saveItems(items);
     render();
+
+    const { error } = await sb.from('shopping_items').delete().eq('id', id);
+    if (error) {
+      console.error('삭제 실패:', error);
+      items = prevItems;
+      render();
+    }
   }
 
-  function clearChecked() {
+  async function clearChecked() {
+    const checkedIds = items.filter(i => i.checked).map(i => i.id);
+    if (checkedIds.length === 0) return;
+
+    const prevItems = items;
     items = items.filter(i => !i.checked);
-    saveItems(items);
     render();
+
+    const { error } = await sb.from('shopping_items').delete().in('id', checkedIds);
+    if (error) {
+      console.error('일괄 삭제 실패:', error);
+      items = prevItems;
+      render();
+    }
   }
 
   addBtn.addEventListener('click', addItem);
@@ -255,7 +427,10 @@
   });
   clearCheckedBtn.addEventListener('click', clearChecked);
 
-  render();
+  (async function init() {
+    items = await loadItems();
+    render();
+  })();
 </script>
 </body>
 </html>
