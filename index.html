@@ -4,67 +4,142 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>같이 쓰는 메모장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-a: #a8edea;
-    --bg-b: #7ac7e8;
-    --card-bg: #ffffff;
-    --panel-bg: #ffffff;
-    --text: #1d1d1f;
-    --sub: #6e6e73;
-    --accent: #007aff;
-    --accent-2: #34c759;
-    --danger: #ff3b30;
-    --border: #e5e5ea;
-    --shadow: rgba(31, 41, 55, 0.12);
+    --cork: #c48a55;
+    --cork-dark: #a86f3f;
+    --paper: #fbf3e1;
+    --paper-shade: #f0e5cd;
+    --ink: #2b2118;
+    --sub: #7a6a55;
+    --rule: rgba(43, 76, 126, 0.15);
+    --margin: #d9534f;
+    --pen: #2b4c7e;
+    --pen-soft: rgba(43, 76, 126, 0.12);
+    --tape: #f2c14e;
+    --pin: #d9534f;
+    --pin-shine: #ffb3ae;
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
     min-height: 100vh;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", sans-serif;
-    background: linear-gradient(150deg, var(--bg-a) 0%, var(--bg-b) 100%);
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08) 0, transparent 40%),
+      radial-gradient(circle at 80% 75%, rgba(0,0,0,0.08) 0, transparent 45%),
+      var(--cork);
     background-attachment: fixed;
-    color: var(--text);
+    color: var(--ink);
     display: flex;
     justify-content: center;
-    padding: 48px 16px;
+    align-items: flex-start;
+    padding: 56px 16px;
   }
-  .app {
+  .stack {
+    position: relative;
     width: 100%;
     max-width: 420px;
-    background: var(--panel-bg);
-    border-radius: 24px;
-    padding: 28px 24px 24px;
-    box-shadow: 0 20px 45px var(--shadow), 0 2px 8px var(--shadow);
-    backdrop-filter: blur(6px);
+  }
+  .sheet {
+    position: absolute;
+    inset: 0;
+    background: var(--paper-shade);
+    border-radius: 6px;
+  }
+  .sheet-2 { transform: rotate(3deg) translate(4px, 10px); opacity: 0.7; }
+  .sheet-1 { transform: rotate(-2deg) translate(-3px, 6px); opacity: 0.85; }
+  .pad {
+    position: relative;
+    background: var(--paper);
+    border-radius: 6px;
+    padding: 34px 26px 26px;
+    transform: rotate(-0.6deg);
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.25);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 33px,
+      var(--rule) 34px
+    );
+    background-position: 0 78px;
+  }
+  .pad::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 0;
+    right: 0;
+    height: 16px;
+    background-image: radial-gradient(circle, var(--cork) 0 4px, transparent 4.5px);
+    background-size: 26px 16px;
+    background-repeat: repeat-x;
+    background-position: 13px center;
+    pointer-events: none;
+  }
+  .tape {
+    position: absolute;
+    top: -14px;
+    left: 22px;
+    width: 74px;
+    height: 28px;
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(242, 193, 78, 0.85) 0 8px,
+      rgba(242, 193, 78, 0.65) 8px 16px
+    );
+    transform: rotate(-7deg);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .pin {
+    position: absolute;
+    top: -10px;
+    right: 30px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--pin-shine), var(--pin) 55%, #8f2b28 100%);
+    box-shadow: 0 3px 5px rgba(0,0,0,0.35);
+    transform: rotate(8deg);
   }
   h1 {
-    font-size: 25px;
-    margin: 0 0 4px;
+    font-family: 'Gaegu', 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    margin: 6px 0 2px;
     text-align: center;
-    letter-spacing: -0.3px;
+    color: var(--ink);
   }
   .subtitle {
+    font-family: 'Gaegu', 'Noto Sans KR', sans-serif;
     text-align: center;
     color: var(--sub);
-    font-size: 13px;
+    font-size: 15px;
     margin: 0 0 20px;
   }
   .progress-wrap {
-    margin-bottom: 20px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
   .progress-track {
-    height: 8px;
+    flex: 1;
+    height: 10px;
     border-radius: 999px;
-    background: var(--border);
+    background: var(--pen-soft);
+    border: 1.5px dashed var(--rule);
     overflow: hidden;
   }
   .progress-fill {
     height: 100%;
     width: 0%;
     border-radius: 999px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    background: linear-gradient(90deg, var(--pen), var(--tape));
     transition: width 0.35s ease;
   }
   .progress-label {
@@ -74,148 +149,165 @@
     color: var(--sub);
     margin-top: 6px;
   }
+  .stamp {
+    font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    border: 2px solid var(--margin);
+    border-radius: 5px;
+    padding: 2px 7px;
+    transform: rotate(-4deg);
+    white-space: nowrap;
+  }
   .input-row {
     display: flex;
-    gap: 8px;
+    align-items: flex-end;
+    gap: 10px;
     margin-bottom: 20px;
   }
   input[type="text"] {
     flex: 1;
-    padding: 13px 16px;
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
+    padding: 8px 4px;
+    border: none;
+    border-bottom: 2px solid var(--rule);
+    background: transparent;
+    font-family: 'Noto Sans KR', sans-serif;
     font-size: 16px;
-    background: var(--card-bg);
-    color: var(--text);
+    color: var(--ink);
     outline: none;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    transition: border-color 0.15s ease;
   }
-  input[type="text"]:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+  input[type="text"]::placeholder {
+    color: var(--sub);
+    opacity: 0.7;
+  }
+  input[type="text"]:focus-visible {
+    border-color: var(--pen);
   }
   button.add-btn {
-    padding: 13px 20px;
-    border: none;
-    border-radius: 14px;
-    background: linear-gradient(135deg, var(--accent), #5ac8fa);
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
+    padding: 9px 18px;
+    border: 2px solid var(--ink);
+    border-radius: 999px 999px 999px 4px;
+    background: var(--tape);
+    color: var(--ink);
+    font-family: 'Gaegu', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 6px 14px rgba(0, 122, 255, 0.3);
     transition: transform 0.1s ease, box-shadow 0.1s ease;
+    box-shadow: 2px 3px 0 rgba(43, 33, 24, 0.35);
   }
-  button.add-btn:hover {
-    transform: translateY(-1px);
-  }
-  button.add-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 3px 8px rgba(0, 122, 255, 0.3);
+  button.add-btn:hover { transform: translate(-1px, -1px); box-shadow: 3px 4px 0 rgba(43, 33, 24, 0.35); }
+  button.add-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 rgba(43, 33, 24, 0.35); }
+  button:focus-visible, .clear-btn:focus-visible {
+    outline: 2px solid var(--pen);
+    outline-offset: 2px;
   }
   ul.list {
     list-style: none;
     margin: 0;
     padding: 0;
-    background: var(--card-bg);
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
   li.item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
+    padding: 9px 2px;
+    border-bottom: 1px solid var(--rule);
     animation: itemIn 0.2s ease;
-    transition: background 0.15s ease;
   }
-  li.item:hover {
-    background: rgba(0, 122, 255, 0.05);
-  }
-  li.item:last-child {
-    border-bottom: none;
-  }
+  li.item:nth-child(odd) { transform: rotate(-0.35deg); }
+  li.item:nth-child(even) { transform: rotate(0.3deg); }
+  li.item:last-child { border-bottom: none; }
   @keyframes itemIn {
     from { opacity: 0; transform: translateY(-6px); }
-    to { opacity: 1; transform: translateY(0); }
+    to { opacity: 1; }
   }
-  li.item .check-wrap {
+  .check {
     position: relative;
     width: 24px;
     height: 24px;
     flex-shrink: 0;
+    display: inline-block;
+    border: 2px solid var(--ink);
+    border-radius: 4px 7px 5px 8px / 7px 4px 8px 5px;
+    background: transparent;
   }
-  li.item input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 24px;
-    height: 24px;
+  .check:focus-within {
+    outline: 2px solid var(--pen);
+    outline-offset: 2px;
+  }
+  .check input[type="checkbox"] {
+    position: absolute;
+    inset: 0;
     margin: 0;
-    border: 2px solid var(--border);
-    border-radius: 50%;
+    opacity: 0;
     cursor: pointer;
-    flex-shrink: 0;
-    display: grid;
-    place-content: center;
-    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
   }
-  li.item input[type="checkbox"]:active {
-    transform: scale(0.9);
+  .check-mark {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
   }
-  li.item input[type="checkbox"]::before {
-    content: "";
-    width: 12px;
-    height: 12px;
-    transform: scale(0);
-    transition: transform 0.12s ease-in-out;
-    box-shadow: inset 1em 1em white;
-    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  .check-mark path {
+    fill: none;
+    stroke: var(--pen);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 20;
+    stroke-dashoffset: 20;
+    transition: stroke-dashoffset 0.25s ease;
   }
-  li.item input[type="checkbox"]:checked {
-    background: var(--accent-2);
-    border-color: var(--accent-2);
+  .check input[type="checkbox"]:checked + .check-mark path {
+    stroke-dashoffset: 0;
   }
-  li.item input[type="checkbox"]:checked::before {
-    transform: scale(1);
+  li.item.checked .check {
+    background: var(--pen-soft);
+    border-color: var(--pen);
   }
   li.item .label {
     flex: 1;
     font-size: 16px;
     word-break: break-word;
-    transition: color 0.15s ease;
   }
   li.item.checked .label {
-    text-decoration: line-through;
+    text-decoration: line-through wavy;
+    text-decoration-color: var(--margin);
     color: var(--sub);
   }
   li.item .delete-btn {
     background: none;
     border: none;
     color: var(--sub);
+    font-family: 'Gaegu', sans-serif;
     font-size: 18px;
     cursor: pointer;
     line-height: 1;
-    padding: 6px 8px;
-    border-radius: 50%;
+    padding: 4px 6px;
     flex-shrink: 0;
-    transition: background 0.15s ease, color 0.15s ease;
   }
-  li.item .delete-btn:hover {
-    background: rgba(255, 59, 48, 0.12);
-    color: var(--danger);
-  }
+  li.item .delete-btn:hover { color: var(--margin); }
   .empty {
     text-align: center;
     color: var(--sub);
-    padding: 40px 16px;
-    font-size: 14px;
+    padding: 34px 16px 20px;
+    font-family: 'Gaegu', sans-serif;
+    font-size: 17px;
   }
   .empty .empty-icon {
-    font-size: 40px;
+    font-size: 34px;
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+  }
+  .empty small {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    opacity: 0.8;
   }
   .footer {
     display: flex;
@@ -224,57 +316,72 @@
     margin-top: 16px;
     font-size: 13px;
     color: var(--sub);
-    padding: 0 4px;
+    padding: 10px 2px 0;
+    border-top: 1.5px dashed var(--rule);
   }
   .clear-btn {
     background: none;
     border: none;
-    color: var(--accent);
-    font-size: 13px;
-    font-weight: 500;
+    color: var(--pen);
+    font-family: 'Gaegu', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
     cursor: pointer;
     padding: 4px 0;
-    transition: opacity 0.15s ease;
   }
-  .clear-btn:hover {
-    opacity: 0.7;
+  .clear-btn:hover { text-decoration: underline; }
+
+  @media (prefers-reduced-motion: reduce) {
+    li.item, .progress-fill, .check-mark path, button.add-btn {
+      animation: none !important;
+      transition: none !important;
+    }
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg-a: #2c5364;
-      --bg-b: #0f2027;
-      --card-bg: #2c2c2e;
-      --panel-bg: #242426;
-      --text: #f2f2f7;
-      --sub: #98989d;
-      --border: #3a3a3c;
-      --shadow: rgba(0, 0, 0, 0.45);
+      --cork: #1f2a22;
+      --cork-dark: #161e18;
+      --paper: #26332b;
+      --paper-shade: #1e2922;
+      --ink: #f4efe3;
+      --sub: #a9b8ad;
+      --rule: rgba(244, 239, 227, 0.14);
+      --margin: #e08585;
+      --pen: #8fc1de;
+      --pen-soft: rgba(143, 193, 222, 0.15);
+      --tape: #d9a73b;
+      --pin: #c96b68;
+      --pin-shine: #f2b8b5;
     }
+    .pad { box-shadow: 0 18px 30px rgba(0, 0, 0, 0.5); }
   }
 </style>
 </head>
 <body>
-  <div class="app">
-    <h1>📝 같이 쓰는 메모장</h1>
-    <p class="subtitle">함께 기록하는 공간</p>
-    <div class="progress-wrap">
-      <div class="progress-track">
-        <div class="progress-fill" id="progressFill"></div>
+  <div class="stack">
+    <div class="sheet sheet-2"></div>
+    <div class="sheet sheet-1"></div>
+    <div class="pad">
+      <div class="tape" aria-hidden="true"></div>
+      <div class="pin" aria-hidden="true"></div>
+      <h1>같이 쓰는 메모장</h1>
+      <p class="subtitle">냉장고에 붙여놓고 함께 적어요</p>
+      <div class="progress-wrap">
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <span class="stamp" id="progressPercent">0%</span>
       </div>
-      <div class="progress-label">
-        <span id="progressText">0 / 0 완료</span>
-        <span id="progressPercent">0%</span>
+      <div class="input-row">
+        <input type="text" id="itemInput" placeholder="여기에 적어주세요" autocomplete="off" />
+        <button class="add-btn" id="addBtn">적기</button>
       </div>
-    </div>
-    <div class="input-row">
-      <input type="text" id="itemInput" placeholder="아이템 입력 후 추가" autocomplete="off" />
-      <button class="add-btn" id="addBtn">추가</button>
-    </div>
-    <ul class="list" id="list"></ul>
-    <div class="footer">
-      <span id="countText">0개 항목</span>
-      <button class="clear-btn" id="clearCheckedBtn">체크된 항목 삭제</button>
+      <ul class="list" id="list"></ul>
+      <div class="footer">
+        <span id="countText">총 0줄</span>
+        <button class="clear-btn" id="clearCheckedBtn">다 쓴 줄 지우기</button>
+      </div>
     </div>
   </div>
 
@@ -304,7 +411,6 @@
   const countText = document.getElementById('countText');
   const clearCheckedBtn = document.getElementById('clearCheckedBtn');
   const progressFill = document.getElementById('progressFill');
-  const progressText = document.getElementById('progressText');
   const progressPercent = document.getElementById('progressPercent');
 
   function render() {
@@ -313,22 +419,31 @@
     if (items.length === 0) {
       const empty = document.createElement('div');
       empty.className = 'empty';
-      empty.innerHTML = '<span class="empty-icon">🧺</span>아직 담긴 아이템이 없어요';
+      empty.innerHTML = '<span class="empty-icon">✏️</span>아직 적힌 게 없어요<small>첫 줄을 적어보세요</small>';
       listEl.appendChild(empty);
     } else {
       items.forEach(item => {
         const li = document.createElement('li');
         li.className = 'item' + (item.checked ? ' checked' : '');
 
-        const checkWrap = document.createElement('span');
-        checkWrap.className = 'check-wrap';
+        const checkLabel = document.createElement('label');
+        checkLabel.className = 'check';
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.checked = item.checked;
+        checkbox.setAttribute('aria-label', '완료 표시');
         checkbox.addEventListener('change', () => toggleItem(item.id));
 
-        checkWrap.appendChild(checkbox);
+        const checkMark = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        checkMark.setAttribute('class', 'check-mark');
+        checkMark.setAttribute('viewBox', '0 0 20 20');
+        const checkPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        checkPath.setAttribute('d', 'M4 10 L8 14 L16 5');
+        checkMark.appendChild(checkPath);
+
+        checkLabel.appendChild(checkbox);
+        checkLabel.appendChild(checkMark);
 
         const label = document.createElement('span');
         label.className = 'label';
@@ -337,9 +452,10 @@
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.textContent = '✕';
+        deleteBtn.setAttribute('aria-label', '줄 지우기');
         deleteBtn.addEventListener('click', () => deleteItem(item.id));
 
-        li.appendChild(checkWrap);
+        li.appendChild(checkLabel);
         li.appendChild(label);
         li.appendChild(deleteBtn);
         listEl.appendChild(li);
@@ -347,11 +463,10 @@
     }
 
     const checkedCount = items.filter(i => i.checked).length;
-    countText.textContent = `${items.length}개 항목 (${checkedCount}개 완료)`;
+    countText.textContent = `총 ${items.length}줄 · ${checkedCount}줄 완료`;
 
     const percent = items.length ? Math.round((checkedCount / items.length) * 100) : 0;
     progressFill.style.width = percent + '%';
-    progressText.textContent = `${checkedCount} / ${items.length} 완료`;
     progressPercent.textContent = percent + '%';
   }
 
