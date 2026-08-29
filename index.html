@@ -224,6 +224,32 @@
     from { opacity: 0; transform: translateY(-6px); }
     to { opacity: 1; }
   }
+  .drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 24px;
+    flex-shrink: 0;
+    cursor: grab;
+    touch-action: none;
+    color: var(--sub);
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .drag-handle:active { cursor: grabbing; }
+  .drag-handle svg { display: block; }
+  .sortable-ghost {
+    opacity: 0.5;
+    background: var(--pen-soft);
+    border-radius: 6px;
+  }
+  .sortable-chosen { background: var(--paper-shade); }
+  .sortable-drag {
+    background: var(--paper);
+    border-radius: 6px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+  }
   .check {
     position: relative;
     width: 24px;
@@ -386,6 +412,7 @@
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script>
   const SUPABASE_URL = 'https://ihtrbofdfrwxcfbxzogt.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_nsfyl1RCddmWxM6uXld3Wg_bG5qkNCs';
@@ -394,8 +421,8 @@
   async function loadItems() {
     const { data, error } = await sb
       .from('shopping_items')
-      .select('id, text, checked')
-      .order('created_at', { ascending: true });
+      .select('id, text, checked, position')
+      .order('position', { ascending: true });
     if (error) {
       console.error('불러오기 실패:', error);
       return [];
@@ -425,6 +452,12 @@
       items.forEach(item => {
         const li = document.createElement('li');
         li.className = 'item' + (item.checked ? ' checked' : '');
+        li.dataset.id = item.id;
+
+        const dragHandle = document.createElement('span');
+        dragHandle.className = 'drag-handle';
+        dragHandle.setAttribute('aria-hidden', 'true');
+        dragHandle.innerHTML = '<svg width="10" height="18" viewBox="0 0 10 18"><circle cx="2.5" cy="2.5" r="1.4" fill="currentColor"/><circle cx="7.5" cy="2.5" r="1.4" fill="currentColor"/><circle cx="2.5" cy="9" r="1.4" fill="currentColor"/><circle cx="7.5" cy="9" r="1.4" fill="currentColor"/><circle cx="2.5" cy="15.5" r="1.4" fill="currentColor"/><circle cx="7.5" cy="15.5" r="1.4" fill="currentColor"/></svg>';
 
         const checkLabel = document.createElement('label');
         checkLabel.className = 'check';
@@ -455,6 +488,7 @@
         deleteBtn.setAttribute('aria-label', '줄 지우기');
         deleteBtn.addEventListener('click', () => deleteItem(item.id));
 
+        li.appendChild(dragHandle);
         li.appendChild(checkLabel);
         li.appendChild(label);
         li.appendChild(deleteBtn);
@@ -475,10 +509,11 @@
     if (!text) return;
     inputEl.value = '';
 
+    const maxPosition = items.length ? Math.max(...items.map(i => i.position)) : 0;
     const { data, error } = await sb
       .from('shopping_items')
-      .insert({ text })
-      .select('id, text, checked')
+      .insert({ text, position: maxPosition + 1 })
+      .select('id, text, checked, position')
       .single();
     if (error) {
       console.error('추가 실패:', error);
@@ -487,6 +522,40 @@
     items.push(data);
     render();
     inputEl.focus();
+  }
+
+  async function reorderItem(id, newIndex) {
+    const movedItem = items.find(i => i.id === id);
+    if (!movedItem) return;
+
+    const orderedIds = Array.from(listEl.children)
+      .filter(li => li.dataset && li.dataset.id)
+      .map(li => li.dataset.id);
+    const prevId = orderedIds[newIndex - 1];
+    const nextId = orderedIds[newIndex + 1];
+    const prevPos = prevId ? items.find(i => i.id === prevId).position : null;
+    const nextPos = nextId ? items.find(i => i.id === nextId).position : null;
+
+    let newPosition;
+    if (prevPos == null && nextPos == null) newPosition = 1;
+    else if (prevPos == null) newPosition = nextPos - 1;
+    else if (nextPos == null) newPosition = prevPos + 1;
+    else newPosition = (prevPos + nextPos) / 2;
+
+    const prevValue = movedItem.position;
+    movedItem.position = newPosition;
+    items.sort((a, b) => a.position - b.position);
+
+    const { error } = await sb
+      .from('shopping_items')
+      .update({ position: newPosition })
+      .eq('id', id);
+    if (error) {
+      console.error('순서 변경 실패:', error);
+      movedItem.position = prevValue;
+      items.sort((a, b) => a.position - b.position);
+      render();
+    }
   }
 
   async function toggleItem(id) {
@@ -541,6 +610,17 @@
     if (e.key === 'Enter') addItem();
   });
   clearCheckedBtn.addEventListener('click', clearChecked);
+
+  new Sortable(listEl, {
+    handle: '.drag-handle',
+    animation: 150,
+    forceFallback: true,
+    fallbackTolerance: 3,
+    onEnd: evt => {
+      const id = evt.item.dataset.id;
+      if (id) reorderItem(id, evt.newIndex);
+    }
+  });
 
   (async function init() {
     items = await loadItems();
